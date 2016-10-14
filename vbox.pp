@@ -1,6 +1,4 @@
-class { 'chocolatey':
-  chocolatey_version => '0.10.3',
-}
+include 'chocolatey'
 
 Package {
   provider => chocolatey,
