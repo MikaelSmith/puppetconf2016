@@ -4,7 +4,7 @@
 
 Install Puppet
 
-    start /wait msiexec.exe /qn /norestart /i https://downloads.puppetlabs.com/windows/puppet-agent-1.7.0-x64.msi
+    start /wait msiexec.exe /qn /norestart /i https://downloads.puppetlabs.com/windows/puppet-agent-x64-latest.msi
 
 Install Modules
 
@@ -31,3 +31,20 @@ Install Modules
 To create a Virtualbox image, run
 
     puppet apply vbox.pp
+
+A Vagrant box has been created at `C:/temp/packer-templates/windowsNano-virtualbox.box`, with a `Vagrantfile` in the parent directory.
+
+To use the box, run
+
+    vagrant up
+
+It may not finish, due to a bug in Vagrant's WinRM support. If it hangs, `Ctrl-C` twice to exit.
+
+The box should still be usable. To connect, first enable Powershell remoting
+
+    Enable-PSRemoting -Force
+    Set-Item "wsman:\localhost\client\trustedhosts" -Value "localhost" -Force
+
+Then use the password `vagrant` and run
+
+    Enter-PSSession -ComputerName localhost -Port 55985 -Credential vagrant
