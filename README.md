@@ -58,3 +58,10 @@ Download and extract Nano Server VHD from https://www.microsoft.com/en-us/evalce
 Install puppetlabs-dsc and puppetlabs-powershell. May need HEAD of both to get fixes for PowerShell 5.
 
     puppet apply hyperv.pp
+
+If puppetlabs-dsc isn't fixed yet
+
+    Install-Module xHyper-V
+    Install-Module xStorage
+    .\BuildVM.ps1
+    Start-DscConfiguration -Wait -Force -Path SetupVM -Verbose
