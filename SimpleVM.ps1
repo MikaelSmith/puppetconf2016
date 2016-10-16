@@ -1,27 +1,27 @@
-Configuration BuildVM {
+Configuration SimpleVM {
   param (
     [string[]]$NodeName = 'localhost',
     [string]$VhdPath
   )
   Import-DscResource -ModuleName xHyper-V
   Node $NodeName {
-    xVMSwitch nat {
+    xVMSwitch internal {
       Ensure = 'Present'
-      Name = 'nat'
+      Name = 'internal'
       Type = 'Internal'
     }
-    xVMHyperV NanoVM {
+    xVMHyperV SimpleVM {
       Ensure = 'Present'
-      Name = 'NanoVM'
+      Name = 'SimpleVM'
       VhdPath = $VhdPath
-      SwitchName = 'nat'
+      SwitchName = 'internal'
       State = 'Running'
       Generation = 1
       StartupMemory = 512MB
       ProcessorCount = 1
-      DependsOn = '[xVMSwitch]nat'
+      DependsOn = '[xVMSwitch]internal'
     }
   }
 }
 
-BuildVM -VhdPath 'C:/VM/NanoServerDataCenter.vhd'
+SimpleVM -VhdPath 'C:/VM/NanoServerDataCenter.vhd'

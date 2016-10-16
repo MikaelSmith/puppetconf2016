@@ -7,8 +7,8 @@ Download and extract Nano Server VHD to C:\VM from https://www.microsoft.com/en-
     Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
     # Restart if needed
     Install-Module xHyper-V
-    .\BuildVM.ps1
-    Start-DscConfiguration -Wait -Force -Path BuildVM -Verbose
+    .\SimpleVM.ps1
+    Start-DscConfiguration -Wait -Force -Path SimpleVM -Verbose
 
 Open Hyper-V Manager, Connect to VM, and set password.
 
@@ -16,8 +16,8 @@ Open Hyper-V Manager, Connect to VM, and set password.
 
 Cleanup
 
-    .\RmVM.ps1
-    Start-DscConfiguration -Wait -Force -Path RmVM -Verbose
+    .\RmSimpleVM.ps1
+    Start-DscConfiguration -Wait -Force -Path RmSimpleVM -Verbose
 
 ## Build Vagrant box
 

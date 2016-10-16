@@ -1,27 +1,27 @@
-Configuration RmVM {
+Configuration RmSimpleVM {
   param (
     [string[]]$NodeName = 'localhost',
     [string]$VhdPath
   )
   Import-DscResource -ModuleName xHyper-V
   Node $NodeName {
-    xVMHyperV NanoVM {
+    xVMHyperV SimpleVM {
       Ensure = 'Absent'
-      Name = 'NanoVM'
+      Name = 'SimpleVM'
       VhdPath = $VhdPath
-      SwitchName = 'nat'
+      SwitchName = 'internal'
       State = 'Running'
       Generation = 1
       StartupMemory = 512MB
       ProcessorCount = 1
     }
-    xVMSwitch nat {
+    xVMSwitch internal {
       Ensure = 'Absent'
       Name = 'nat'
       Type = 'Internal'
-      DependsOn = '[xVMHyperV]NanoVM'
+      DependsOn = '[xVMHyperV]SimpleVM'
     }
   }
 }
 
-RmVM -VhdPath 'C:/VM/NanoServerDataCenter.vhd'
+RmSimpleVM -VhdPath 'C:/VM/NanoServerDataCenter.vhd'
