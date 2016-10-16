@@ -1,17 +1,12 @@
-Configuration BuildVM {
+Configuration RmVM {
   param (
     [string[]]$NodeName = 'localhost',
     [string]$VhdPath
   )
   Import-DscResource -ModuleName xHyper-V
   Node $NodeName {
-    xVMSwitch nat {
-      Ensure = 'Present'
-      Name = 'nat'
-      Type = 'Internal'
-    }
     xVMHyperV NanoVM {
-      Ensure = 'Present'
+      Ensure = 'Absent'
       Name = 'NanoVM'
       VhdPath = $VhdPath
       SwitchName = 'nat'
@@ -19,9 +14,14 @@ Configuration BuildVM {
       Generation = 1
       StartupMemory = 512MB
       ProcessorCount = 1
-      DependsOn = '[xVMSwitch]nat'
+    }
+    xVMSwitch nat {
+      Ensure = 'Absent'
+      Name = 'nat'
+      Type = 'Internal'
+      DependsOn = '[xVMHyperV]NanoVM'
     }
   }
 }
 
-BuildVM -VhdPath 'C:/VM/NanoServerDataCenter.vhd'
+RmVM -VhdPath 'C:/VM/NanoServerDataCenter.vhd'

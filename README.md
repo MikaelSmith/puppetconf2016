@@ -1,8 +1,29 @@
-# Build Vagrant box
+# PuppetConf 2016 - Nano Server: Puppet + DSC Talk
 
-## Setup
+## Hyper-V Demo
 
-### Windows
+Download and extract Nano Server VHD to C:\VM from https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2016
+
+    Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
+    # Restart if needed
+    Install-Module xHyper-V
+    .\BuildVM.ps1
+    Start-DscConfiguration -Wait -Force -Path BuildVM -Verbose
+
+Open Hyper-V Manager, Connect to VM, and set password.
+
+    Enter-PSSession -VMName NanoVM -Credential Administrator
+
+Cleanup
+
+    .\RmVM.ps1
+    Start-DscConfiguration -Wait -Force -Path RmVM -Verbose
+
+## Build Vagrant box
+
+### Setup
+
+#### Windows
 
 Install Puppet
 
@@ -14,7 +35,7 @@ Install Modules
     puppet module install puppetlabs-vcsrepo
     puppet module install puppetlabs-hocon
 
-### Mac
+#### Mac
 
 **In progress**
 
@@ -28,7 +49,7 @@ Install Modules
     puppet module install puppetlabs-vcsrepo
     puppet module install puppetlabs-hocon
 
-## Usage
+### Usage
 
 To create a Virtualbox image, run
 
@@ -50,18 +71,3 @@ The box should still be usable. To connect, first enable Powershell remoting
 Then use the password `vagrant` and run
 
     Enter-PSSession -ComputerName localhost -Port 55985 -Credential vagrant
-
-# Hyper-V Demo
-
-Download and extract Nano Server VHD from https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2016
-
-Install puppetlabs-dsc and puppetlabs-powershell. May need HEAD of both to get fixes for PowerShell 5.
-
-    puppet apply hyperv.pp
-
-If puppetlabs-dsc isn't fixed yet
-
-    Install-Module xHyper-V
-    Install-Module xStorage
-    .\BuildVM.ps1
-    Start-DscConfiguration -Wait -Force -Path SetupVM -Verbose
