@@ -35,6 +35,8 @@ Install Modules
     puppet module install puppetlabs-vcsrepo
     puppet module install puppetlabs-hocon
 
+Switching between Hyper-V and VirtualBox: http://www.hanselman.com/blog/SwitchEasilyBetweenVirtualBoxAndHyperVWithABCDEditBootEntryInWindows81.aspx
+
 #### Mac
 
 **In progress**
