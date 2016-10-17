@@ -97,6 +97,10 @@ Get Docker
     Expand-Archive -Path "$env:TEMP\docker-1.13.0-dev.zip" -DestinationPath $env:ProgramFiles
     [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Docker", [EnvironmentVariableTarget]::Machine)
     $env:PATH = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine)
+
+Setup the Docker switch with external access and start Docker
+    .\DockerNAT.ps1
+    Start-DscConfiguration -Wait -Force -Path DockerNAT -Verbose
     dockerd -D
 
 Start a Nano Server container
@@ -107,5 +111,6 @@ Start a Nano Server container
     docker run -it -v C:\puppet:C:\puppet microsoft/nanoserver powershell
 
 Try some Puppet things
+
     C:\puppet\bin\facter.bat os
     C:\puppet\bin\puppet.bat apply -e "notify {'Hello World!':}"
