@@ -103,6 +103,7 @@ Get Docker
     $env:PATH = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine)
 
 Setup the Docker switch with external access and start Docker
+
     .\DockerNAT.ps1
     Start-DscConfiguration -Wait -Force -Path DockerNAT -Verbose
     dockerd -D
