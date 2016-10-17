@@ -17,7 +17,7 @@ Configuration RmSimpleVM {
     }
     xVMSwitch internal {
       Ensure = 'Absent'
-      Name = 'nat'
+      Name = 'internal'
       Type = 'Internal'
       DependsOn = '[xVMHyperV]SimpleVM'
     }

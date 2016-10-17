@@ -4,6 +4,8 @@
 
 Download and extract Nano Server VHD to C:\VM from https://www.microsoft.com/en-us/evalcenter/evaluate-windows-server-2016.
 
+All the following commands are run As Administrator, as required to manage Hyper-V instances.
+
 Enable Hyper-V
 
     Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All
@@ -17,9 +19,11 @@ Start Nano Server
 
 Open Hyper-V Manager, Connect to VM, and set password.
 
-Connect via PowerShell
+Connect via PowerShell ISE
 
-    Enter-PSSession -VMName NanoVM -Credential Administrator
+    Enter-PSSession -VMName SimpleVM -Credential Administrator
+    echo hello > hello.txt
+    psedit hello.txt
 
 Cleanup
 
@@ -95,7 +99,7 @@ Get Docker
 
     Invoke-WebRequest "https://master.dockerproject.org/windows/amd64/docker-1.13.0-dev.zip" -OutFile "$env:TEMP\docker-1.13.0-dev.zip" -UseBasicParsing
     Expand-Archive -Path "$env:TEMP\docker-1.13.0-dev.zip" -DestinationPath $env:ProgramFiles
-    [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Docker", [EnvironmentVariableTarget]::Machine)
+    [Environment]::SetEnvironmentVariable("Path", $env:Path + ";$env:ProgramFiles\Docker", [EnvironmentVariableTarget]::Machine)
     $env:PATH = [Environment]::GetEnvironmentVariable("Path", [EnvironmentVariableTarget]::Machine)
 
 Setup the Docker switch with external access and start Docker
@@ -114,3 +118,29 @@ Try some Puppet things
 
     C:\puppet\bin\facter.bat os
     C:\puppet\bin\puppet.bat apply -e "notify {'Hello World!':}"
+
+## Debugging Problems Demo
+
+Setup NanoServerApiScan
+
+    choco install -y windows-sdk-10
+    mkdir "$env:ProgramFiles\NanoApiScan"
+    Invoke-WebRequest "https://msdnshared.blob.core.windows.net/media/2016/04/NanoServerApiScan.zip" -OutFile "$env:TEMP\NanoServerApiScan.zip"
+    Expand-Archive -Path "$env:TEMP\NanoServerApiScan.zip" -DestinationPath "$env:ProgramFiles\NanoApiScan"
+    Mount-DiskImage -ImagePath C:\VM\NanoServerDataCenter.vhd
+    cp -r E:\Windows\System32\forwarders\* "$env:ProgramFiles\NanoApiScan"
+    Dismount-DiskImage -ImagePath C:\VM\NanoServerDataCenter.vhd
+
+Scan nano.exe
+
+    Invoke-WebRequest https://www.nano-editor.org/dist/v2.5/NT/nano-2.5.3.zip -OutFile "$env:TEMP\nano-2.5.3.zip" -UseBasicParsing
+    Expand-Archive -Path "$env:TEMP\nano-2.5.3.zip" -DestinationPath "$env:ProgramFiles"
+    & 'C:\Program Files\NanoApiScan\NanoServerApiScan.exe' /BinaryPath:'C:\Program Files\nano-2.5.3-win32' /WindowsKitsPath:'C:\Program Files (x86)\Windows Kits'
+
+Try vim
+
+    choco install -y vim-x64
+    & 'C:\Program Files\Vim\vim80\vim.exe'
+    pushd 'C:\Program Files\NanoApiScan'
+    & .\NanoServerApiScan.exe /BinaryPath:'C:\Program Files\Vim\vim80' /WindowsKitsPath:'C:\Program Files (x86)\Windows Kits'
+    popd
