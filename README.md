@@ -119,11 +119,55 @@ Try some Puppet things
     C:\puppet\bin\facter.bat os
     C:\puppet\bin\puppet.bat apply -e "notify {'Hello World!':}"
 
+## Packaging Demo
+
+First install the Windows 10 SDK from https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk
+
+Create the package
+
+    # Set publisher CN to match your signing key
+    cp .\AppxManifest.xml 'C:\Program Files\Puppet Labs\Puppet\'
+    cp .\logo.png 'C:\Program Files\Puppet Labs\Puppet\'
+    & 'C:\Program Files (x86)\Windows Kits\10\bin\x64\makeappx.exe' pack /d 'C:\Program Files\Puppet Labs\Puppet' /p puppet-agent.appx
+
+Sign the package (https://msdn.microsoft.com/en-us/library/windows/desktop/jj835832(v=vs.85).aspx)
+
+    & 'C:\Program Files (x86)\Windows Kits\10\bin\x64\makecert.exe' /n "CN=Michael, O=Michael, C=US" /r /h 0 /eku "1.3.6.1.5.5.7.3.3,1.3.6.1.4.1.311.10.3.13" /e "01/01/2017" /sv MyKey.pvk MyKey.cer
+    & 'C:\Program Files (x86)\Windows Kits\10\bin\x64\pvk2pfx.exe' /pvk MyKey.pvk /spc MyKey.cer /pfx MyKey.pfx
+    & 'C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe' sign /fd SHA256 /a /f MyKey.pfx puppet-agent.appx
+
+Add to the Hyper-V image
+
+    Mount-DiskImage -ImagePath C:\VM\NanoServerDataCenter.vhd
+    cp puppet-agent.appx E:\
+    cp MyKey.cer E:\
+    Dismount-DiskImage -ImagePath C:\VM\NanoServerDataCenter.vhd
+
+Start VM
+
+    Start-DscConfiguration -Wait -Force -Path SimpleVM -Verbose
+    Enter-PSSession -VMName SimpleVM -Credential Administrator
+
+Install the app
+
+    Import-Certificate -FilePath C:\MyKey.cer -CertStoreLocation Cert:\LocalMachine\Root
+    Add-AppxPackage C:\puppet-agent.appx
+    Get-AppxPackage puppet-agent
+    # Show contents installed at InstallLocation
+    Remove-AppxPackage puppet-agent
+
+Cleanup
+
+    Start-DscConfiguration -Wait -Force -Path RmSimpleVM -Verbose
+
+Note that the service probably isn't working yet.
+
 ## Debugging Problems Demo
+
+First install the Windows 10 SDK from https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk
 
 Setup NanoServerApiScan
 
-    choco install -y windows-sdk-10
     mkdir "$env:ProgramFiles\NanoApiScan"
     Invoke-WebRequest "https://msdnshared.blob.core.windows.net/media/2016/04/NanoServerApiScan.zip" -OutFile "$env:TEMP\NanoServerApiScan.zip"
     Expand-Archive -Path "$env:TEMP\NanoServerApiScan.zip" -DestinationPath "$env:ProgramFiles\NanoApiScan"
