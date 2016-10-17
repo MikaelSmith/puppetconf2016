@@ -154,11 +154,12 @@ Install the app
     Import-Certificate -FilePath C:\MyKey.cer -CertStoreLocation Cert:\LocalMachine\Root
     Add-AppxPackage C:\puppet-agent.appx
     Get-AppxPackage puppet-agent
-    # Show contents installed at InstallLocation
-    Remove-AppxPackage puppet-agent
+    ls (Get-AppxPackage puppet-agent).InstallLocation
 
 Cleanup
 
+    Remove-AppxPackage (Get-AppxPackage puppet-agent).PackageFullName
+    exit
     Start-DscConfiguration -Wait -Force -Path RmSimpleVM -Verbose
 
 Note that the service probably isn't working yet.

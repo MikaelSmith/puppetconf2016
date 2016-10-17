@@ -5,7 +5,7 @@
          xmlns:serverpreview="http://schemas.microsoft.com/appx/manifest/serverpreview/windows10"
          IgnorableNamespaces="f uap serverpreview">
 
-  <Identity Name="Puppet"
+  <Identity Name="puppet-agent"
             ProcessorArchitecture="x64"
             Publisher="CN=Michael, O=Michael, C=US"
             Version="1.0.0.0"
@@ -20,7 +20,7 @@
   </Dependencies>
 
   <Properties>
-    <DisplayName>Puppet</DisplayName>
+    <DisplayName>puppet-agent</DisplayName>
     <PublisherDisplayName>Michael Demo</PublisherDisplayName>
     <Description>Puppet Agent</Description>
     <Logo>logo.png</Logo>
