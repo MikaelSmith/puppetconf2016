@@ -85,7 +85,7 @@ Then use the password `vagrant` and run
 
     Enter-PSSession -ComputerName localhost -Port 55985 -Credential vagrant
 
-## Docker Demo
+## Docker Demo (Windows 10)
 
 Full instructions for Docker on Windows 10 are at https://msdn.microsoft.com/en-us/virtualization/windowscontainers/quick_start/quick_start_windows_10. The demo requires Windows 10 with `winver` showing build 14393.222 or later.
 
@@ -119,6 +119,37 @@ Try some Puppet things
 
     C:\puppet\bin\facter.bat os
     C:\puppet\bin\puppet.bat apply -e "notify {'Hello World!':}"
+
+## Docker Demo
+
+Instructions for Docker on Windows Server 2016 are at https://msdn.microsoft.com/en-us/virtualization/windowscontainers/deployment/deployment.
+
+Get Docker
+
+    Install-Module -Name DockerMsftProvider -Repository PSGallery -Force
+    Install-Package -Name docker -ProviderName DockerMsftProvider
+    Restart-Computer -Force
+
+The Docker service is enabled by default.
+
+Start a Nano Server container
+
+    docker pull microsoft/nanoserver
+    # Create a link to installed Puppet, because I can't figure out paths with spaces
+    cmd /c mklink /D C:\puppet 'C:\Program Files\Puppet Labs\Puppet\'
+    docker run -it -v C:\puppet:C:\puppet microsoft/nanoserver powershell
+
+## Puppet Demo
+
+Start Docker
+    dockerd -D
+    docker run -it -v C:\puppet:C:\puppet microsoft/nanoserver powershell
+
+Setup scripts
+
+    cp example.pp C:\puppet
+    C:\puppet\bin\puppet.bat module install puppetlabs-dsc
+    C:\puppet\bin\puppet.bat apply example.pp
 
 ## Packaging Demo
 
