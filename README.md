@@ -139,17 +139,50 @@ Start a Nano Server container
     cmd /c mklink /D C:\puppet 'C:\Program Files\Puppet Labs\Puppet\'
     docker run -it -v C:\puppet:C:\puppet microsoft/nanoserver powershell
 
+### NodeJS
+
+Build a NodeJS app
+
+    docker build -t node:nano node
+    docker build -t node:nano-onbuild node/onbuild
+    docker build -t node:app node/app
+    docker run -t -p 8000:8000 node:app
+
+View the site
+
+    $node = docker ps --format '{{ .ID }}'
+    $ip = docker inspect --format '{{ .NetworkSettings.Networks.nat.IPAddress }}' $node
+    iwr $ip:8000
+
 ## Puppet Demo
 
+### IIS
+
+Mount the Windows Server 2016 ISO at `E:`. Install Puppet.
+
+Start a container with paths mounted from the project repo
+
+    docker run -it -v C:\puppet:C:\puppet -v $pwd\:C:\demo -v E:\NanoServer:C:\NanoServer -p 80:80 microsoft/nanoserver powershell
+
+Provision the node
+
+    C:\puppet\bin\puppet apply C:\demo\iis\iis.pp
+
+View the site
+
+    $node = docker ps --format '{{ .ID }}'
+    $ip = docker inspect --format '{{ .NetworkSettings.Networks.nat.IPAddress }}' $node
+    & 'C:\Program Files\Internet Explorer\iexplore.exe' $ip
+
+### Another Demo
+
 Start Docker
-    dockerd -D
-    docker run -it -v C:\puppet:C:\puppet microsoft/nanoserver powershell
+
+    docker run -it -v C:\puppet:C:\puppet -v $pwd\:C:\demo microsoft/nanoserver powershell
 
 Setup scripts
 
-    cp example.pp C:\puppet
-    C:\puppet\bin\puppet.bat module install puppetlabs-dsc
-    C:\puppet\bin\puppet.bat apply example.pp
+    C:\puppet\bin\puppet.bat apply C:\demo\examples\example.pp
 
 ## Packaging Demo
 
